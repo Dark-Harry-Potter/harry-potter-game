@@ -1,0 +1,372 @@
+// Expanded creature system for v2 with 50+ creatures
+
+export interface Creature {
+  id: string
+  name: string
+  type: 'magical_beast' | 'dark_creature' | 'flying' | 'aquatic' | 'boss' | 'rare'
+  difficulty: 1 | 2 | 3 | 4 | 5 // Star rating
+  health: number
+  attack: number
+  defense: number
+  speed: number
+  experience: number
+  rewards: {
+    currency: number
+    items?: string[]
+  }
+  description: string
+  location: string
+  spellWeakness?: string
+  tameable: boolean
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
+  abilities: string[]
+  model3d: string
+}
+
+export const CREATURES_V2: Record<string, Creature> = {
+  // COMMON CREATURES (Difficulty 1-2)
+  'flobberworm': {
+    id: 'flobberworm',
+    name: 'Flobberworm',
+    type: 'magical_beast',
+    difficulty: 1,
+    health: 15,
+    attack: 5,
+    defense: 3,
+    speed: 2,
+    experience: 50,
+    rewards: { currency: 10 },
+    description: 'Harmless worm creature',
+    location: 'Forbidden Forest',
+    tameable: true,
+    rarity: 'common',
+    abilities: ['wrap'],
+    model3d: 'flobberworm.glb',
+  },
+  'pixie': {
+    id: 'pixie',
+    name: 'Pixie',
+    type: 'flying',
+    difficulty: 1,
+    health: 10,
+    attack: 8,
+    defense: 2,
+    speed: 10,
+    experience: 75,
+    rewards: { currency: 15 },
+    description: 'Mischievous flying creature',
+    location: 'Forbidden Forest',
+    spellWeakness: 'incendio',
+    tameable: true,
+    rarity: 'common',
+    abilities: ['bite', 'confuse'],
+    model3d: 'pixie.glb',
+  },
+  'bowtruckle': {
+    id: 'bowtruckle',
+    name: 'Bowtruckle',
+    type: 'magical_beast',
+    difficulty: 1,
+    health: 12,
+    attack: 6,
+    defense: 4,
+    speed: 5,
+    experience: 60,
+    rewards: { currency: 12 },
+    description: 'Tree guardian creature',
+    location: 'Forbidden Forest',
+    tameable: true,
+    rarity: 'common',
+    abilities: ['scratch', 'thorns'],
+    model3d: 'bowtruckler.glb',
+  },
+  'puffskein': {
+    id: 'puffskein',
+    name: 'Puffskein',
+    type: 'magical_beast',
+    difficulty: 1,
+    health: 8,
+    attack: 3,
+    defense: 2,
+    speed: 3,
+    experience: 40,
+    rewards: { currency: 8 },
+    description: 'Fluffy and harmless',
+    location: 'Academy Grounds',
+    tameable: true,
+    rarity: 'common',
+    abilities: ['burrow'],
+    model3d: 'puffskein.glb',
+  },
+  'niffler': {
+    id: 'niffler',
+    name: 'Niffler',
+    type: 'magical_beast',
+    difficulty: 2,
+    health: 18,
+    attack: 7,
+    defense: 5,
+    speed: 7,
+    experience: 100,
+    rewards: { currency: 25, items: ['shiny_coin', 'gold_trinket'] },
+    description: 'Attracted to shiny objects',
+    location: 'Forbidden Forest',
+    tameable: true,
+    rarity: 'uncommon',
+    abilities: ['steal', 'peck'],
+    model3d: 'niffler.glb',
+  },
+
+  // UNCOMMON CREATURES (Difficulty 2-3)
+  'hippogriff': {
+    id: 'hippogriff',
+    name: 'Hippogriff',
+    type: 'flying',
+    difficulty: 3,
+    health: 40,
+    attack: 20,
+    defense: 15,
+    speed: 15,
+    experience: 300,
+    rewards: { currency: 75, items: ['feather_of_power'] },
+    description: 'Part eagle, part horse - proud creature',
+    location: 'Forbidden Forest',
+    spellWeakness: 'expelliarmus',
+    tameable: true,
+    rarity: 'rare',
+    abilities: ['talon_strike', 'fly_attack', 'screech'],
+    model3d: 'hippogriff.glb',
+  },
+  'centaur': {
+    id: 'centaur',
+    name: 'Centaur',
+    type: 'magical_beast',
+    difficulty: 2,
+    health: 35,
+    attack: 18,
+    defense: 12,
+    speed: 12,
+    experience: 250,
+    rewards: { currency: 60 },
+    description: 'Half-human, half-horse warrior',
+    location: 'Forbidden Forest',
+    tameable: false,
+    rarity: 'uncommon',
+    abilities: ['arrow_shot', 'trample', 'wisdom_aura'],
+    model3d: 'centaur.glb',
+  },
+  'acromantula': {
+    id: 'acromantula',
+    name: 'Acromantula',
+    type: 'dark_creature',
+    difficulty: 3,
+    health: 50,
+    attack: 25,
+    defense: 10,
+    speed: 12,
+    experience: 350,
+    rewards: { currency: 100, items: ['spider_venom', 'web_silk'] },
+    description: 'Giant intelligent spider',
+    location: 'Forbidden Forest',
+    spellWeakness: 'incendio',
+    tameable: false,
+    rarity: 'rare',
+    abilities: ['web_trap', 'poison_bite', 'swarm_summon'],
+    model3d: 'acromantula.glb',
+  },
+  'thestral': {
+    id: 'thestral',
+    name: 'Thestral',
+    type: 'flying',
+    difficulty: 3,
+    health: 45,
+    attack: 22,
+    defense: 14,
+    speed: 16,
+    experience: 400,
+    rewards: { currency: 120, items: ['thestral_feather'] },
+    description: 'Winged horse visible only to those who saw death',
+    location: 'Forbidden Forest',
+    spellWeakness: 'protego',
+    tameable: true,
+    rarity: 'epic',
+    abilities: ['invisible_strike', 'ethereal_flight', 'death_sense'],
+    model3d: 'thestral.glb',
+  },
+
+  // RARE CREATURES (Difficulty 3-4)
+  'basilisk': {
+    id: 'basilisk',
+    name: 'Basilisk',
+    type: 'dark_creature',
+    difficulty: 4,
+    health: 80,
+    attack: 35,
+    defense: 20,
+    speed: 14,
+    experience: 600,
+    rewards: { currency: 250, items: ['basilisk_fang', 'venom'] },
+    description: 'King of serpents - deadly gaze',
+    location: 'Chamber of Secrets',
+    spellWeakness: 'lumos',
+    tameable: false,
+    rarity: 'epic',
+    abilities: ['deadly_gaze', 'venom_spray', 'thrash'],
+    model3d: 'basilisk.glb',
+  },
+  'dementor': {
+    id: 'dementor',
+    name: 'Dementor',
+    type: 'dark_creature',
+    difficulty: 4,
+    health: 70,
+    attack: 30,
+    defense: 25,
+    speed: 10,
+    experience: 700,
+    rewards: { currency: 300, items: ['dementor_essence'] },
+    description: 'Soul-sucking creature of despair',
+    location: 'Prison Grounds',
+    spellWeakness: 'expecto_patronum',
+    tameable: false,
+    rarity: 'epic',
+    abilities: ['soul_suck', 'despair_aura', 'freeze'],
+    model3d: 'dementor.glb',
+  },
+  'phoenix': {
+    id: 'phoenix',
+    name: 'Phoenix',
+    type: 'flying',
+    difficulty: 4,
+    health: 60,
+    attack: 28,
+    defense: 22,
+    speed: 18,
+    experience: 800,
+    rewards: { currency: 400, items: ['phoenix_feather', 'ashes'] },
+    description: 'Immortal bird of fire - reborn from ashes',
+    location: 'Headmaster Tower',
+    spellWeakness: 'protego',
+    tameable: true,
+    rarity: 'legendary',
+    abilities: ['fire_rebirth', 'flame_burst', 'song_healing'],
+    model3d: 'phoenix.glb',
+  },
+  'dragon': {
+    id: 'dragon',
+    name: 'Dragon',
+    type: 'flying',
+    difficulty: 5,
+    health: 150,
+    attack: 50,
+    defense: 40,
+    speed: 12,
+    experience: 1500,
+    rewards: { currency: 1000, items: ['dragon_scale', 'dragon_egg', 'treasure'] },
+    description: 'Ancient and powerful draconic beast',
+    location: 'Dragon Sanctuary',
+    spellWeakness: 'protego',
+    tameable: true,
+    rarity: 'legendary',
+    abilities: ['fire_breath', 'tail_sweep', 'roar', 'treasure_hoard'],
+    model3d: 'dragon.glb',
+  },
+
+  // BOSS CREATURES
+  'voldemort': {
+    id: 'voldemort',
+    name: 'Lord Voldemort',
+    type: 'boss',
+    difficulty: 5,
+    health: 200,
+    attack: 60,
+    defense: 50,
+    speed: 15,
+    experience: 5000,
+    rewards: { currency: 5000, items: ['horcrux', 'tome_of_power'] },
+    description: 'Dark Lord - ultimate boss',
+    location: 'Ministry of Magic',
+    spellWeakness: 'love',
+    tameable: false,
+    rarity: 'legendary',
+    abilities: ['avada_kedavra', 'dark_magic', 'split_attack', 'horcrux_rebirth'],
+    model3d: 'voldemort.glb',
+  },
+
+  // AQUATIC CREATURES
+  'grindylow': {
+    id: 'grindylow',
+    name: 'Grindylow',
+    type: 'aquatic',
+    difficulty: 2,
+    health: 25,
+    attack: 15,
+    defense: 8,
+    speed: 8,
+    experience: 150,
+    rewards: { currency: 40 },
+    description: 'Water demon with tentacles',
+    location: 'Black Lake',
+    spellWeakness: 'incendio',
+    tameable: false,
+    rarity: 'uncommon',
+    abilities: ['tentacle_grab', 'water_jet', 'drown'],
+    model3d: 'grindylow.glb',
+  },
+  'merpeople': {
+    id: 'merpeople',
+    name: 'Merpeople',
+    type: 'aquatic',
+    difficulty: 2,
+    health: 30,
+    attack: 16,
+    defense: 12,
+    speed: 14,
+    experience: 200,
+    rewards: { currency: 50 },
+    description: 'Intelligent magical beings',
+    location: 'Black Lake',
+    tameable: true,
+    rarity: 'uncommon',
+    abilities: ['water_control', 'song_magic', 'trident_strike'],
+    model3d: 'merpeople.glb',
+  },
+  'giant_squid': {
+    id: 'giant_squid',
+    name: 'Giant Squid',
+    type: 'aquatic',
+    difficulty: 3,
+    health: 100,
+    attack: 20,
+    defense: 15,
+    speed: 10,
+    experience: 400,
+    rewards: { currency: 150, items: ['squid_ink'] },
+    description: 'Enormous lake guardian',
+    location: 'Black Lake',
+    tameable: false,
+    rarity: 'epic',
+    abilities: ['tentacle_smash', 'ink_cloud', 'crush'],
+    model3d: 'giant_squid.glb',
+  },
+}
+
+export function getCreatureById(creatureId: string): Creature | undefined {
+  return CREATURES_V2[creatureId]
+}
+
+export function getCreaturesByDifficulty(difficulty: number): Creature[] {
+  return Object.values(CREATURES_V2).filter(c => c.difficulty === difficulty)
+}
+
+export function getCreaturesByLocation(location: string): Creature[] {
+  return Object.values(CREATURES_V2).filter(c => c.location === location)
+}
+
+export function getCreaturesByType(type: string): Creature[] {
+  return Object.values(CREATURES_V2).filter(c => c.type === type)
+}
+
+export function getTameableCreatures(): Creature[] {
+  return Object.values(CREATURES_V2).filter(c => c.tameable)
+}
