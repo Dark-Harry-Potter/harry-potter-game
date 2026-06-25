@@ -1,6 +1,8 @@
 // AI Engine v3 - Autonomous Game Management System
 // This system runs autonomously without admin intervention
+// Incorporates all extended Harry Potter lore: canonical HP 1-7, Fantastic Beasts, James Potter series, Methods of Rationality
 import Anthropic from '@anthropic-ai/sdk';
+import { EXTENDED_LORE, getRandomLoreContext, getDifficultyFromLevel } from './extended-lore-v3';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -42,10 +44,22 @@ export interface WorldState {
   economyInflation: number; // price multiplier
 }
 
-// AI-driven NPC behavior generator
+// AI-driven NPC behavior generator with extended lore context
 export async function generateNPCBehavior(npc: NPC, worldState: WorldState, playerActions: string[]): Promise<string> {
+  const loreContext = getRandomLoreContext();
+  const loreSource = typeof loreContext === 'object' && 'title' in loreContext ? loreContext.title : 'Wizarding World';
+  
   const prompt = `
-You are an intelligent NPC in a magical wizard academy game. Your role is to respond naturally based on your personality and the world state.
+You are an intelligent NPC in a magical wizard academy game set in the comprehensive wizarding universe spanning:
+- Canonical Harry Potter books (1-7) and Fantastic Beasts films
+- Extended universe including James Potter series (next generation wizards)
+- Rationalist magical studies and advanced spell theory
+- Extended wizarding materials (Quidditch, creature care, magical history)
+
+Your responses should reflect knowledge of these interconnected lore sources while maintaining your NPC personality.
+Current lore context: ${loreSource}
+
+Your role is to respond naturally based on your personality and the world state.
 
 NPC Profile:
 - Name: ${npc.name}

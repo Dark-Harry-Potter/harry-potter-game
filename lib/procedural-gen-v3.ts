@@ -1,6 +1,7 @@
 // Procedural Content Generation v3 - Dynamic Quests, Dungeons, Encounters
 import SimplexNoise from 'simplex-noise';
 import Alea from 'alea';
+import { EXTENDED_LORE, generateLoreBasedQuest, getCreatureByLoreSource, getLocationByLoreSource, getDifficultyFromLevel } from './extended-lore-v3';
 
 // Seeded noise for deterministic procedural generation
 export class ProceduralGenerator {
@@ -14,6 +15,18 @@ export class ProceduralGenerator {
     this.noise = new SimplexNoise(() => this.rng());
   }
 
+  // Lore-aware quest generation (uses extended Harry Potter universe)
+  generateLoreQuest(playerLevel: number) {
+    const loreQuest = generateLoreBasedQuest(playerLevel);
+    const difficultyTier = getDifficultyFromLevel(playerLevel);
+    
+    return {
+      ...loreQuest,
+      seed: this.seed,
+      generatedAt: Date.now(),
+    };
+  }
+
   // Procedural quest generation
   generateQuest(playerLevel: number, location: string, questType: string) {
     const questTypes = {
@@ -23,6 +36,8 @@ export class ProceduralGenerator {
         'Defend the {location} from invaders',
         'Hunt {creature} for their {item}',
         'Investigate mysterious {creature} activity',
+        'Protect {location} from {creature} invasion', // Extended universe
+        'Stop the {creature} rampage in {location}',
       ],
       exploration: [
         'Find {item} in the {location}',
@@ -30,37 +45,52 @@ export class ProceduralGenerator {
         'Discover {count} hidden areas',
         'Uncover the secrets of {location}',
         'Retrieve ancient artifacts from {location}',
+        'Explore the {location} to find {item}', // James Potter theme
+        'Navigate the {location} challenges',
       ],
       collection: [
         'Gather {count} {item}',
         'Collect ingredients for {npc}',
         'Assemble {count} different {item}',
         'Harvest {item} from {location}',
+        'Find rare {item} for research', // Rationalist theme
       ],
       escort: [
         'Protect {npc} during their journey',
         'Guide {npc} to {location}',
         'Rescue {npc} from {location}',
+        'Escort {npc} safely through dangerous lands',
       ],
       social: [
         'Mediate dispute between {npc} and {npc}',
         'Gather information about {topic}',
         'Convince {npc} to help with {task}',
+        'Learn the truth from {npc} about {topic}',
+      ],
+      rationalist: [ // Methods of Rationality quests
+        'Solve the logical puzzle about {topic}',
+        'Experiment with {item} to understand {topic}',
+        'Design a solution to the {topic} problem',
+        'Deduce the secret behind {item}',
+      ],
+      fantastic: [ // Fantastic Beasts quests
+        'Locate and catalog the {creature}',
+        'Care for injured {creature} at {location}',
+        'Photograph rare {creature} in {location}',
+        'Rescue {creature} from danger',
       ],
     };
 
     const templates = questTypes[questType as keyof typeof questTypes] || questTypes.combat;
     const template = templates[Math.floor(this.rng() * templates.length)];
 
+    // Creatures from all lore sources: canonical HP, Fantastic Beasts, James Potter, extended universe
     const creatures = [
-      'Acromantula',
-      'Basilisk',
-      'Dementor',
-      'Thestral',
-      'Hippogriff',
-      'Pixie',
-      'Bowtruckle',
+      ...EXTENDED_LORE.creatures.fromBooks,
+      ...EXTENDED_LORE.creatures.fromFantasticBeasts,
+      ...EXTENDED_LORE.creatures.fromExtendedUniverse,
     ];
+    
     const items = [
       'Ancient Scroll',
       'Phoenix Feather',
@@ -68,8 +98,25 @@ export class ProceduralGenerator {
       'Dragon Scale',
       'Rare Herb',
       'Magical Crystal',
+      'Destiny Stone', // From James Potter
+      'Prophecy Crystal',
+      'Artifact Shard',
+      'Beast Egg',
+      'Magical Essence',
     ];
-    const npcs = ['Dumbledore', 'Snape', 'Luna', 'Hagrid', 'McGonagall', 'Flitwick'];
+    
+    const npcs = [
+      'Dumbledore',
+      'Snape',
+      'Luna',
+      'Hagrid',
+      'McGonagall',
+      'Flitwick',
+      'James Potter', // Next generation
+      'Lily Potter',
+      'Newt Scamander', // Fantastic Beasts
+      'Albus Potter',
+    ];
 
     let description = template;
     description = description.replace('{count}', Math.ceil(2 + playerLevel / 5).toString());
