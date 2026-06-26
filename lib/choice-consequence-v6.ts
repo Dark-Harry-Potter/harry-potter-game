@@ -1,5 +1,8 @@
 // Choice Consequence System v6 - Dynamic Story Branching
 // Tracks player choices and determines which era comes next
+// Integrates conditional Crimson Thread logic based on James Potter era existence
+
+import { checkCrimsonThreadExistence } from './crimson-thread-conditional-v6';
 
 export interface PlayerChoice {
   id: string;
@@ -17,6 +20,8 @@ export interface StoryOutcome {
   charactersDead: string[];
   nextEra: string;
   narrative: string;
+  jamesPotterEraWillExist?: boolean; // True if this outcome leads to James Potter era existing
+  crimsonThreadWillExist?: boolean; // Derived from jamesPotterEraWillExist
 }
 
 // Consequence mapping for major choices
@@ -29,6 +34,8 @@ export const MAJOR_CONSEQUENCES: Record<string, StoryOutcome[]> = {
       charactersDead: [],
       nextEra: 'cursedchild',
       narrative: 'With Voldemort defeated, peace returns to the wizarding world. The next generation begins their journey.',
+      jamesPotterEraWillExist: true,
+      crimsonThreadWillExist: true, // Crimson Thread exists if James Potter era exists
     },
     {
       battleWon: false,
@@ -36,7 +43,9 @@ export const MAJOR_CONSEQUENCES: Record<string, StoryOutcome[]> = {
       charactersAlive: ['voldemort'],
       charactersDead: ['harry_potter', 'dumbledore'],
       nextEra: 'rational',
-      narrative: 'The dark forces prevail. A new era of resistance begins in secret. Wizards must rediscover magic through science and reason.',
+      narrative: 'The dark forces prevail. A new era of resistance begins in secret. Wizards must rediscover magic through science and reason. Gryffindor Tower stands without a house ghost—Nearly Headless Nick\'s presence fades as the timeline darkens.',
+      jamesPotterEraWillExist: false,
+      crimsonThreadWillExist: false, // Crimson Thread CANNOT exist without James Potter era
     },
     {
       battleWon: true,
@@ -45,6 +54,8 @@ export const MAJOR_CONSEQUENCES: Record<string, StoryOutcome[]> = {
       charactersDead: ['ron_weasley'],
       nextEra: 'jamesporter',
       narrative: 'Victory comes at great cost. Harry and the survivors move forward, and a new chapter begins with the next generation.',
+      jamesPotterEraWillExist: true,
+      crimsonThreadWillExist: true, // Crimson Thread manifests through the bloodline
     },
   ],
 

@@ -1,5 +1,6 @@
 // Random Ghost Encounter System v6
 // Unpredictable ghost and Peeves encounters during exploration
+// Includes conditional Crimson Thread logic based on James Potter era existence
 
 import {
   CANON_TIMELINE,
@@ -7,6 +8,11 @@ import {
   entityExistsInEra,
 } from './canon-timeline-v6';
 import { generateRandomEncounterDialogue } from './dynamic-dialogue-v6';
+import {
+  checkCrimsonThreadExistence,
+  getRationalEraGhosts,
+  getCrimsonThreadEncounter,
+} from './crimson-thread-conditional-v6';
 
 export interface GhostEncounter {
   encounterId: string;
@@ -40,12 +46,26 @@ export class GhostEncounterManager {
   async triggerRandomEncounter(
     playerId: string,
     location: string,
-    era: string
+    era: string,
+    potterEraBattleOutcome?: 'victory' | 'defeat' | 'unknown'
   ): Promise<GhostEncounter | null> {
     // Check cooldown
     const lastTime = this.lastEncounterTime.get(playerId) || 0;
     if (Date.now() - lastTime < this.ENCOUNTER_COOLDOWN) {
       return null;
+    }
+
+    // For Rational Era, check if Crimson Thread should exist
+    if (era === 'rational') {
+      const crimsonThreadCondition = checkCrimsonThreadExistence({
+        potterEraBattleOutcome: potterEraBattleOutcome || 'unknown',
+      });
+
+      // Special handling for Crimson Thread in Rational Era
+      if (crimsonThreadCondition.crimsonThreadExists && Math.random() < 0.15) {
+        // 15% chance to encounter Crimson Thread if it exists
+        return this.generateCrimsonThreadEncounter(playerId, location);
+      }
     }
 
     // 30% chance of encounter
@@ -91,6 +111,60 @@ export class GhostEncounterManager {
 
     const types: EncounterType[] = ['friendly', 'mischievous', 'ominous', 'helpful', 'hostile'];
     return types[Math.floor(Math.random() * types.length)];
+  }
+
+  // Special encounter for Crimson Thread in Rational Era
+  private generateCrimsonThreadEncounter(
+    playerId: string,
+    location: string
+  ): GhostEncounter {
+    const encounterId = `encounter_crimson_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const crimsonEncounter = getCrimsonThreadEncounter();
+
+    const encounterText = `
+${crimsonEncounter.appearance}
+
+"${crimsonEncounter.dialogue}"
+
+You sense an ancient magic, threads of fate woven through centuries. This is no ordinary ghost.
+    `;
+
+    const options: EncounterOption[] = [
+      {
+        id: 'crimson_listen',
+        text: 'Listen intently to Crimson Thread\'s words',
+        outcome: 'You gain insight into the threads of your destiny',
+        reputationChange: 10,
+        lootReward: 'Crimson Thread Essence (rare)',
+      },
+      {
+        id: 'crimson_question',
+        text: 'Ask about the James Potter legacy',
+        outcome: 'Crimson Thread reveals fragments of an alternate timeline',
+        reputationChange: 5,
+        lootReward: 'Memory Fragment (uncommon)',
+      },
+      {
+        id: 'crimson_ignore',
+        text: 'Walk away without engaging',
+        outcome: 'The threads fade, leaving only mystery',
+        reputationChange: -5,
+      },
+    ];
+
+    this.lastEncounterTime.set(playerId, Date.now());
+
+    return {
+      encounterId,
+      ghostId: 'crimson_thread',
+      ghostName: 'Crimson Thread',
+      location,
+      era: 'rational',
+      encounterText,
+      encounterOptions: options,
+      timestamp: new Date(),
+      playerReputationImpact: 10,
+    };
   }
 
   // Generate encounter dialogue
