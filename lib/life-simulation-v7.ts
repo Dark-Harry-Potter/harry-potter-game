@@ -1,5 +1,10 @@
 // Life Simulation System v7
 // GTA-style life simulator for wizards with full character progression
+// All players start at age 11 with era-specific cutscenes
+
+import { getEraCutscene, generateCharacterBackstory } from './era-cutscenes-v7';
+
+export const STARTING_AGE = 11;
 
 export interface CharacterStats {
   strength: number; // Physical/magical power
@@ -8,6 +13,55 @@ export interface CharacterStats {
   courage: number; // Bravery in battle
   cunning: number; // Deception/strategy
   loyalty: number; // Trustworthiness
+}
+
+// Function to initialize new character with age 11 and cutscene
+export function initializeCharacterForEra(
+  characterName: string,
+  house: string,
+  eraId: string,
+  userId: string
+): CharacterProfile & { cutsceneRequired: boolean } {
+  const cutscene = getEraCutscene(eraId);
+  const backstory = generateCharacterBackstory(eraId, characterName, house);
+
+  return {
+    id: `char_${userId}_${eraId}_${Date.now()}`,
+    name: characterName,
+    age: STARTING_AGE, // Always 11
+    maxAge: 100,
+    house,
+    currentEra: eraId,
+    backstory,
+    cutsceneViewed: false,
+    cutsceneRequired: !!cutscene,
+    stats: {
+      strength: 50,
+      intelligence: 50,
+      charisma: 50,
+      courage: 50,
+      cunning: 50,
+      loyalty: 50,
+    },
+    health: {
+      hp: 100,
+      maxHp: 100,
+      mana: 100,
+      maxMana: 100,
+      hunger: 0,
+      exhaustion: 0,
+      corruption: 0,
+    },
+    relationships: [],
+    career: null,
+    experience: 0,
+    level: 1,
+    fame: 0,
+    wealth: 0,
+    family: [],
+    createdAt: new Date(),
+    lastActive: new Date(),
+  };
 }
 
 export interface CharacterHealth {
@@ -45,9 +99,12 @@ export interface Career {
 export interface CharacterProfile {
   id: string;
   name: string;
-  age: number;
+  age: number; // Always starts at 11
   maxAge: number;
   house: string;
+  currentEra: string;
+  backstory: string;
+  cutsceneViewed: boolean;
   era: string;
   appearance: {
     skinTone: string;
